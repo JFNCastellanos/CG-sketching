@@ -1,0 +1,40 @@
+/*
+# ---------- Method 2: Iterative Sketched CG ----------
+def cg_sketch_iterative(A, b, m, x0=None, tol=1e-10, max_iter=100, seed=42):
+    n = A.shape[0]
+    S = gaussian_sketch(n, m, seed=seed)
+    SA = S @ A
+    x = x0.copy() if x0 is not None else np.zeros(n)
+    r = b - A @ x
+    r_sk = S @ r
+    p_sk = r_sk.copy()
+    rsold = r_sk @ r_sk
+    for i in range(max_iter):
+        p_full = S.T @ p_sk
+        Ap = A @ p_full
+        Ap_sk = S @ Ap
+        pAp_sk = p_sk @ Ap_sk
+        if pAp_sk <= 0: break
+        α = rsold / pAp_sk
+        x = x + α * p_full
+        r = r - α * Ap
+        r_sk = S @ r
+        rsnew = r_sk @ r_sk
+        if np.sqrt(rsnew) < tol: break
+        p_sk = r_sk + (rsnew / rsold) * p_sk
+        rsold = rsnew
+    return x, {'iter': i+1, 'res_norm': np.sqrt(rsnew)}
+
+
+     ---------- Sketch generators ----------
+def gaussian_sketch(n, m, seed=42):
+    rng = np.random.default_rng(seed)
+    return rng.standard_normal((m, n)) / np.sqrt(m)
+
+def count_sketch(n, m, seed=42):
+    rng = np.random.default_rng(seed)
+    S = np.zeros((m, n), dtype=np.float32)
+    for j in range(n):
+        S[rng.integers(m), j] = rng.choice([-1, 1])
+    return S
+*/
